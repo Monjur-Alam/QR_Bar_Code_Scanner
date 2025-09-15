@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "icon_qr_code.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
