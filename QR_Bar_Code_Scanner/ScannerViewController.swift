@@ -64,7 +64,7 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         super.viewWillDisappear(animated)
         if session.isRunning { session.stopRunning() }
         setTorch(isON: false)
-    } 
+    }
 
     // MARK: - Permissions + session
 
@@ -182,7 +182,7 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
                 DispatchQueue.main.async {
                     FullscreenLoader.shared.hide()
                     self.scannerView.setState(.result)
-                    self.presentQRResultPopup()
+                    self.presentQRResultPopup(with: value)
                 }
             } else {
                 DispatchQueue.main.async {
@@ -199,7 +199,7 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
 
         DispatchQueue.main.async {
             self.scannerView.setState(.result)
-            self.presentQRResultPopup()
+            self.presentQRResultPopup(with: textField.text ?? "")
         }
         textField.resignFirstResponder() // hides keyboard
         return true
@@ -211,8 +211,15 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         
     }
 
-    private func presentQRResultPopup() {
-        
+    private func presentQRResultPopup(with result: String) {
+        let popup = QRResultPopupViewController(resultText: result)
+        popup.didTapClose = { [weak self] in
+            self?.isProcessing = false
+            self?.scannerView.setState(.idle)
+            self?.scannerView.overlay.animate(to: nil, animated: true)
+            self?.updateRectOfInterestToDefault()
+        }
+        present(popup, animated: true)
     }
 
     private func showError(_ message: String) {
